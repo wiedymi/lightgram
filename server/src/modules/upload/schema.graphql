@@ -1,0 +1,16 @@
+scalar Upload
+
+type Mutation {
+  upload(file: Upload!): File!
+  uploadMany(files: [Upload!]!): [File!]!
+}
+
+type File {
+  id: String!
+  path: String!
+  encoding: String!
+}
+
+type Query {
+  uploads: [File]
+}

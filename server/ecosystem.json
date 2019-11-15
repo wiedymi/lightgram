@@ -1,0 +1,9 @@
+{
+  "name": "GraphQL-API",
+  "script": "clusters.js",
+  "ignoreWatch": ["node_modules", ".tmp"],
+  "watch": "./",
+  "cwd": ".",
+  "instances": "max",
+  "exec_mode": "cluster"
+}

@@ -1,0 +1,32 @@
+type Query {
+  feed(offset: Int!, limit: Int!): feedPagination
+}
+
+type FeedImage {
+  tiny: String
+  small: String
+  large: String
+}
+type Feed {
+  id: ID
+  image: FeedImage!
+  body: String!
+  user: User
+  time: String
+}
+
+type User {
+  id: ID
+  username: String!
+  password: String!
+  email: String!
+  role: String!
+  feed: Feed
+}
+
+type feedPagination {
+  docs: [Feed!]!
+  totalDocs: Int!
+  limit: Int!
+  offset: Int!
+}
