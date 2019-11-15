@@ -23,3 +23,16 @@ export const LOGIN = gql`
     }
   }
 `
+
+export const CREATE_POST = gql`
+  mutation createPost($file: Upload!) {
+    createPost(file: $file) {
+      image {
+        small
+      }
+      user {
+        username
+      }
+    }
+  }
+`

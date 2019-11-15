@@ -1,6 +1,6 @@
-const user = async (parent, arg, { user }) => {
+const user = async (parent, arg, { userService }) => {
   const id = parent.userId
-  const result = await user.get({ id })
+  const result = await userService.get({ id })
 
   return result
 }

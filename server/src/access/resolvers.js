@@ -9,3 +9,7 @@ export const Query = {
 export const Mutation = {
   createUser: isGuest,
 }
+
+export const User = {
+  token: isAuthenticated,
+}

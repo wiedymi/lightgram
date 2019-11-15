@@ -1,7 +1,7 @@
 /node_modules
 /logs
 /uploads/*
-/mongo
+/mongo/*
 # misc
 .DS_Store
 .env

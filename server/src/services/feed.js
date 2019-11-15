@@ -14,6 +14,7 @@ const feedSchema = createSchema(
     body: {
       type: String,
     },
+    time: Number,
   },
   { collection: 'posts' },
 )

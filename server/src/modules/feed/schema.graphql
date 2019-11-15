@@ -1,5 +1,11 @@
+scalar Upload
+
 type Query {
   feed(offset: Int!, limit: Int!): feedPagination
+}
+
+type Mutation {
+  createPost(file: Upload!): Feed!
 }
 
 type FeedImage {
@@ -7,6 +13,7 @@ type FeedImage {
   small: String
   large: String
 }
+
 type Feed {
   id: ID
   image: FeedImage!

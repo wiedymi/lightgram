@@ -1,11 +1,14 @@
 import fs from 'fs'
 import uuid from 'uuid'
 import jimp from 'jimp'
+import { config } from '@/lib'
 
 const whiteList = ['png', 'jpg', 'jpeg']
 
-const createPath = (prefix, fileName, extra, extension) => {
-  return `${process.cwd()}/uploads/${prefix}${fileName}.${extra ? extra + '.' : ''}${extension}`
+const createPath = (prefix, fileName, extra, extension, root = false) => {
+  return `${root ? config.SERVER : process.cwd()}/uploads/${prefix}${fileName}.${
+    extra ? extra + '.' : ''
+  }${extension}`
 }
 
 const fileHandler = async (raw, opts, callback) => {
@@ -20,7 +23,7 @@ const fileHandler = async (raw, opts, callback) => {
   const id = uuid()
   const prefix = opts.prefix || ''
   const path = createPath(prefix, id, null, extension)
-
+  const url = createPath(prefix, id, null, extension, true)
   if (!fs.existsSync(path)) {
     fs.mkdirSync(`${process.cwd()}/uploads/${prefix}`, { recursive: true })
   }
@@ -36,6 +39,7 @@ const fileHandler = async (raw, opts, callback) => {
         return {
           id,
           path,
+          url,
           prefix,
           extension,
         }
@@ -47,6 +51,7 @@ const fileHandler = async (raw, opts, callback) => {
             id,
             path,
             prefix,
+            url,
             extension,
           },
           image,

@@ -19,7 +19,6 @@ export const FEED = gql`
         image {
           small
         }
-        body
         user {
           username
         }

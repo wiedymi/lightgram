@@ -23,6 +23,7 @@ const auth = async (resolve, root, args, context, info) => {
       if (user) {
         context.user = {
           role: user.role,
+          id: user.id,
         }
 
         return resolve(root, args, context, info)

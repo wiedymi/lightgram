@@ -16,7 +16,7 @@ export default new GraphQLModule({
     pubsub,
     subscriptions,
     db: feedService,
-    user: userService,
+    userService,
     mail: {
       sendEmail,
       EMAIL_VERIFICATION,

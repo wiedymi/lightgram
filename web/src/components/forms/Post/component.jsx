@@ -1,7 +1,6 @@
-import React from 'react'
-import { Drawer, Form, Row, Col, Input, Modal, Upload, Icon, message, Button } from 'antd'
-
-const { Dragger } = Upload
+import React, { useState } from 'react'
+import { Drawer, Form, Row, Col, Modal, Upload, Icon, Button } from 'antd'
+import { createPost } from '@/graphql'
 
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
@@ -11,56 +10,71 @@ function getBase64 (file) {
     reader.onerror = error => reject(error)
   })
 }
-class PicturesWall extends React.Component {
-  state = {
+const PicturesWall = () => {
+  const initState = {
     previewVisible: false,
     previewImage: '',
     fileList: [],
   }
 
-  handleCancel = () => this.setState({ previewVisible: false })
+  const [state, setState] = useState(initState)
+  const [addPost, { data, loading }] = createPost()
 
-  handlePreview = async file => {
+  const handleCancel = () => setState({ ...state, previewVisible: false })
+
+  const handlePreview = async file => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj)
     }
 
-    this.setState({
+    setState({
+      ...state,
       previewImage: file.url || file.preview,
       previewVisible: true,
     })
   }
 
-  handleChange = ({ fileList }) => this.setState({ fileList })
+  const handleChange = e => {
+    const [file] = e.target.files
 
-  render () {
-    const { previewVisible, previewImage, fileList } = this.state
-    const uploadButton = (
-      <div>
-        <Icon type="plus" />
-        <div className="ant-upload-text">Upload</div>
-      </div>
-    )
-    return (
-      <div className="clearfix">
-        <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          listType="picture-card"
-          fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={this.handleChange}
-        >
-          {fileList.length >= 8 ? null : uploadButton}
-        </Upload>
-        <Modal visible={previewVisible} footer={null}
-          onCancel={this.handleCancel}
-        >
-          <img alt="example" style={{ width: '100%' }}
-            src={previewImage} />
-        </Modal>
-      </div>
-    )
+    addPost({
+      variables: { file },
+    })
+    setState({ ...state, fileList: e.fileList })
   }
+
+  const { previewVisible, previewImage, fileList } = state
+  const uploadButton = (
+    <div>
+      <Icon type="plus" />
+      <div className="ant-upload-text">Upload</div>
+    </div>
+  )
+
+  const handleSubmit = async file => {
+    return Promise.resolve()
+  }
+
+  return (
+    <div className="clearfix">
+      <Upload
+        action={handleSubmit}
+        listType="picture-card"
+        fileList={fileList}
+        onPreview={handlePreview}
+      >
+        {fileList.length >= 8 ? null : uploadButton}
+      </Upload>
+      <Modal visible={previewVisible} footer={null}
+        onCancel={handleCancel}
+      >
+        <img alt="example" style={{ width: '100%' }}
+          src={previewImage} />
+      </Modal>
+      <input type="file" onChange={handleChange}
+        name="file" />
+    </div>
+  )
 }
 
 const Component = ({ form, formOpened, close }) => {
