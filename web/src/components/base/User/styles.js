@@ -11,5 +11,6 @@ export const Card = styled(card)`
   margin-top: 20px !important;
 `
 export const Statistic = styled(statistic)`
-  margin-top: 20px !important;
+  line-height: 1.4!important;
+  margin-top: 0!important;
 `

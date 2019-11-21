@@ -6,13 +6,14 @@ import { HttpLink } from 'apollo-link-http'
 import { setContext } from 'apollo-link-context'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
+import { createUploadLink } from 'apollo-upload-client'
 import { config } from '@/helpers'
 import { LOCAL_STORAGE } from '@/constants'
 import { StateResolvers, typeDefs, getAppState } from './store'
 
 const { REACT_APP_API, REACT_APP_API_WS } = config
 
-const httpLink = new HttpLink({
+const httpLink = createUploadLink({
   uri: REACT_APP_API,
 })
 

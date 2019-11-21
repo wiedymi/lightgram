@@ -20,6 +20,7 @@ export const FEED = gql`
           small
         }
         user {
+          email
           username
         }
         time

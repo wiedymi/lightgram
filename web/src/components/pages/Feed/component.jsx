@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { Col, Row, Empty } from 'antd'
+import { useInfiniteScroll } from 'react-infinite-scroll-hook'
 import { getFeed } from '@/graphql'
 import { LOCAL_STORAGE } from '@/constants'
 import { useAccess, getData } from '@/helpers'
 import { Card, User } from '@/components/base'
 import { Auth } from '@/components/forms'
-import { ErrorMessage, Pagination, EmptyWrapper } from './styles'
+import { ErrorMessage, EmptyWrapper } from './styles'
 
 const Emp = ({ text }) => {
   return (
@@ -21,12 +22,12 @@ const Emp = ({ text }) => {
 }
 
 const Component = () => {
-  const [currentPage, setPage] = useState(1)
   const token = localStorage.getItem(LOCAL_STORAGE.TOKEN)
   const [user, showUser] = useState(!!token)
+  const [infinityLoading, setInfinityLoading] = useState(false)
+
   const perPage = 2
-  const { data, loading, error } = getFeed({
-    offset: currentPage === 1 ? 0 : currentPage,
+  const { data, loading, error, fetchMore } = getFeed({
     limit: perPage,
   })
 
@@ -38,6 +39,41 @@ const Component = () => {
   })
 
   const usersAccess = hasAccess('feed:read')
+
+  const posts = getData(data, 'feed', true)
+
+  const loadFunc = () => {
+    setInfinityLoading(true)
+
+    return fetchMore({
+      variables: {
+        offset: posts.length,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return prev
+        }
+
+        const prePost = getData(data, 'feed', true)
+        const nextPost = getData(fetchMoreResult, 'feed', true)
+
+        const result = {
+          feed: {
+            ...fetchMoreResult.feed,
+            docs: [...prePost, ...nextPost],
+          },
+        }
+        setInfinityLoading(false)
+        return result
+      },
+    })
+  }
+
+  const infiniteRef = useInfiniteScroll({
+    loading: infinityLoading,
+    hasNextPage: data && data.feed ? data.feed.totalDocs !== posts.length : true,
+    onLoadMore: loadFunc,
+  })
 
   if (!usersAccess) {
     return <Emp text="No access" />
@@ -51,7 +87,6 @@ const Component = () => {
     return <ErrorMessage>Server is not available</ErrorMessage>
   }
 
-  const posts = getData(data, 'feed', true)
   const users = posts.map(props => {
     return (
       <Col span={24} key={props.id}>
@@ -64,17 +99,19 @@ const Component = () => {
     <Row gutter={[40, 24]} type="flex">
       <Col span={16}>
         <Row gutter={[40, 24]} type="flex">
-          {data.feed.docs.length > 0 ? users : <Emp text="No posts" />}
+          {data.feed.totalDocs > 0 ? (
+            <div ref={infiniteRef}>
+              {users}
+              {infinityLoading && <div>Loading...</div>}
+            </div>
+          ) : (
+            <Emp text="No posts" />
+          )}
         </Row>
-        {data.feed.totalDocs / perPage > 1 && (
-          <Pagination
-            defaultCurrent={currentPage}
-            defaultPageSize={perPage}
-            total={data.feed.totalDocs}
-            onChange={setPage} />
-        )}
       </Col>
-      <Col span={8}>{user ? <User /> : <Auth showUser={showUser} />}</Col>
+      <Col span={8}>
+        {user ? <User total={data.feed.totalDocs} /> : <Auth showUser={showUser} />}
+      </Col>
     </Row>
   )
 }
