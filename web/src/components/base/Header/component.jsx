@@ -1,9 +1,15 @@
 import React, { useState } from 'react'
 import { Icon, Row, Col } from 'antd'
+import { LOCAL_STORAGE } from '@/constants'
 import { UserIcon, UserAvatar, UserSubMenu, Wrapper, Menu, LogoIcon } from './styles'
 
 const Component = () => {
   const [selectedKeys, setSelectedKeys] = useState('feed')
+
+  const logout = () => {
+    localStorage.removeItem(LOCAL_STORAGE.TOKEN)
+  }
+
   return (
     <Wrapper>
       <Row type="flex" justify="center">
@@ -55,7 +61,7 @@ const Component = () => {
                 <Icon type="setting" />
                 Setting
               </Menu.Item>
-              <Menu.Item>
+              <Menu.Item onClick={logout}>
                 <Icon type="logout" />
                 Log out
               </Menu.Item>

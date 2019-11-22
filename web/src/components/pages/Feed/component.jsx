@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Col, Row, Empty } from 'antd'
 import { useInfiniteScroll } from 'react-infinite-scroll-hook'
-import { getFeed } from '@/graphql'
+import { getFeed, subPosts } from '@/graphql'
 import { LOCAL_STORAGE } from '@/constants'
 import { useAccess, getData } from '@/helpers'
 import { Card, User } from '@/components/base'
@@ -19,6 +19,38 @@ const Emp = ({ text }) => {
         description={<span>{text}</span>} />
     </EmptyWrapper>
   )
+}
+
+const NewPost = () => {
+  const [newPost, addNewPost] = useState([])
+  const { data, loading } = subPosts()
+
+  useEffect(() => {
+    if (data && !loading) {
+      const isUpdate = newPost.filter(val => {
+        return val.id === data.subPosts.id
+      })
+
+      if (isUpdate.length === 0) {
+        const post = data ? data.subPosts : {}
+        addNewPost([...newPost, post])
+      }
+    }
+  }, [data, loading, addNewPost])
+
+  if (newPost.length > 0) {
+    const posts = newPost.reverse().map(props => {
+      return (
+        <Col span={24} key={props.id}>
+          <Card {...props} />
+        </Col>
+      )
+    })
+
+    return posts
+  }
+
+  return <></>
 }
 
 const Component = () => {
@@ -99,6 +131,7 @@ const Component = () => {
     <Row gutter={[40, 24]} type="flex">
       <Col span={16}>
         <Row gutter={[40, 24]} type="flex">
+          <NewPost />
           {data.feed.totalDocs > 0 ? (
             <div ref={infiniteRef}>
               {users}

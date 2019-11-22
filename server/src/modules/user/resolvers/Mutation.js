@@ -1,7 +1,7 @@
 const createUser = async (root, args, context) => {
   const { email, username, password } = args
   const { db, pubsub, subscriptions, mail } = context
-  const { REGISTERED_USER } = subscriptions
+  const { REGISTERED_USER, COUNT_STATS } = subscriptions
   const { sendEmail, EMAIL_VERIFICATION } = mail
 
   const isExist = await db.get({ email })
@@ -20,6 +20,8 @@ const createUser = async (root, args, context) => {
   pubsub.publish(REGISTERED_USER, {
     users: createdUser,
   })
+
+  pubsub.publish(COUNT_STATS)
 
   sendEmail(EMAIL_VERIFICATION, { email })
 

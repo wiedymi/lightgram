@@ -11,5 +11,5 @@ export const Mutation = {
 }
 
 export const User = {
-  token: isAuthenticated,
+  token: or(isGuest, isAuthenticated),
 }

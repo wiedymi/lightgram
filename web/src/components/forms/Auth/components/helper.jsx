@@ -35,12 +35,12 @@ const createAuthFrom = (
     )
     const showForm = useCallback(() => toggleAuthForm(showFormValue), [toggleAuthForm])
 
-    if (loading) {
-      console.log('loading')
-    }
-    if (error) {
-      console.log(error.graphQLErrors)
-    }
+    // if (loading) {
+    //   console.log('loading')
+    // }
+    // if (error) {
+    //   console.log(error.graphQLErrors)
+    // }
 
     if (!error && !loading && data !== undefined) {
       localStorage.setItem(LOCAL_STORAGE.TOKEN, data[field].token)

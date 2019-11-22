@@ -56,6 +56,8 @@ class Service {
     this.delete = async (value, field) => this.model.deleteOne(value, field)
 
     this.deleteMany = async (value, field) => this.model.deleteMany(value, field)
+
+    this.count = async () => this.model.countDocuments({})
   }
 }
 

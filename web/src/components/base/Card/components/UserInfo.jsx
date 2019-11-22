@@ -11,8 +11,7 @@ const getTime = time => {
   return date.toLocaleString()
 }
 
-export const UserInfo = ({ email, username, time, avatar, ...rest }) => {
-  console.log(rest)
+export const UserInfo = ({ email, username, time, avatar }) => {
   const gravatar = grav.url(email)
   const av = avatar !== undefined ? avatar : gravatar
 

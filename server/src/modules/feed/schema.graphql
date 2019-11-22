@@ -2,10 +2,21 @@ scalar Upload
 
 type Query {
   feed(offset: Int!, limit: Int!): feedPagination
+  stats: Stats
 }
 
 type Mutation {
   createPost(file: Upload!): Feed!
+}
+
+type Subscription {
+  subPosts: Feed
+  stats: Stats
+}
+
+type Stats {
+  users: Int!
+  posts: Int!
 }
 
 type FeedImage {

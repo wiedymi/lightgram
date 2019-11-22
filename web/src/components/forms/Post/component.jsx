@@ -1,64 +1,119 @@
-import React from 'react'
-import { Drawer, Form, Row, Col, Upload, Icon, Button } from 'antd'
+import React, { useState } from 'react'
+import { Drawer, Form, Row, Col, Upload, Icon, Button, message } from 'antd'
 import { createPost } from '@/graphql'
 
-const UploadImage = ({ close }) => {
-  const [addPost, { data, loading }] = createPost()
+function getBase64 (img, callback) {
+  const reader = new FileReader()
+  reader.addEventListener('load', () => callback(reader.result))
+  reader.readAsDataURL(img)
+}
 
-  if (data && !loading) {
-    close()
+const UploadImage = ({ close, setSubmit }) => {
+  const [state, setState] = useState({
+    loading: false,
+  })
+  const [addPost] = createPost()
+
+  const handleChange = info => {
+    getBase64(info.file, imageUrl =>
+      setState({
+        imageUrl,
+        loading: false,
+      }),
+    )
   }
 
-  const handleSubmit = async file => {
-    return addPost({ variables: { file } })
+  function beforeUpload (file) {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!')
+    }
+
+    const isLt2M = file.size / 1024 / 1024 < 2
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!')
+    }
+
+    if (isJpgOrPng && isLt2M) {
+      setSubmit(() => () => {
+        addPost({ variables: { file } })
+        close()
+        setState({ loading: false })
+      })
+    }
+    return false
   }
+
+  const uploadButton = (
+    <>
+      <Icon type="plus" />
+      <div className="ant-upload-text">Upload</div>
+    </>
+  )
 
   return (
     <div className="clearfix">
-      <Upload action={handleSubmit} listType="picture-card" >
+      <Upload
+        beforeUpload={beforeUpload}
+        showUploadList={false}
+        listType="picture-card"
+        onChange={handleChange}
+      >
         <div>
-          <Icon type="plus" />
-          <div className="ant-upload-text">Upload</div>
+          {state.imageUrl ? (
+            <img src={state.imageUrl} alt="avatar"
+              style={{ width: '100%' }} />
+          ) : (
+            uploadButton
+          )}
         </div>
       </Upload>
     </div>
   )
 }
 
-const Component = ({ form, formOpened, close }) => {
+const PostForm = ({ form, formOpened, close }) => {
   const { getFieldDecorator } = form
+  const [handleSubmit, setSubmit] = useState(() => ({}))
 
   return (
-    <div>
-      <Drawer
-        title="Create a post"
-        placement="right"
-        closable
-        onClose={close}
-        visible={formOpened}
-        width={720}
-      >
-        <Form layout="vertical" hideRequiredMark>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item label="Image">
-                {getFieldDecorator('image', {
-                  rules: [{ required: true, message: 'Please enter user name' }],
-                })(<UploadImage close={close}/>)}
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Button onClick={close} type="primary"
-                htmlType="submit"
-              >
-                Publish
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </Drawer>
-    </div>
+    <Form layout="vertical" hideRequiredMark>
+      <Row gutter={16}>
+        <Col span={24}>
+          <Form.Item label="Image">
+            {getFieldDecorator('image', {
+              rules: [{ required: true, message: 'Please enter user name' }],
+            })(<UploadImage close={close} formOpened={formOpened}
+              setSubmit={setSubmit} />)}
+          </Form.Item>
+        </Col>
+        <Col span={24}>
+          <Button onClick={handleSubmit} type="primary"
+            htmlType="submit"
+          >
+            Publish
+          </Button>
+        </Col>
+      </Row>
+    </Form>
   )
 }
 
-export default Form.create({ name: 'create-a-post' })(Component)
+const WrapperPostForm = Form.create({ name: 'create-a-post' })(PostForm)
+
+const Component = ({ formOpened, close }) => {
+  return (
+    <Drawer
+      title="Create a post"
+      placement="right"
+      closable
+      onClose={close}
+      visible={formOpened}
+      width={720}
+    >
+      <WrapperPostForm formOpened={formOpened} close={close} />
+    </Drawer>
+  )
+}
+
+export default Component

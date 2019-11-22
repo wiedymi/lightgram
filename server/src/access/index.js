@@ -1,8 +1,4 @@
 import { shield } from 'graphql-shield'
-import { Query, Mutation, User } from './resolvers'
+import * as resolvers from './resolvers'
 
-export default shield({
-  Query,
-  Mutation,
-  User,
-})
+export default shield(resolvers)

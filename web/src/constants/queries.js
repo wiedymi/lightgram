@@ -29,3 +29,12 @@ export const FEED = gql`
     }
   }
 `
+
+export const STATS = gql`
+  query {
+    stats {
+      users
+      posts
+    }
+  }
+`

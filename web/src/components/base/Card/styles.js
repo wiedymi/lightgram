@@ -29,6 +29,10 @@ export const CardBody = styled.div`
 
 export const CardImg = styled.img`
   width: 100%;
+  background-image: url(${({ placeholder }) => placeholder});
+  min-width: 100%;
+  background-size: cover;
+  border: 0px;
 `
 
 export const CardController = styled.div`

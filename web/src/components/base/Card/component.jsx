@@ -7,7 +7,7 @@ const Component = ({ image, user, time }) => {
     <Card title={<UserInfo {...user} time={time} />} bordered
       size="small" extra={<DropdownInfo />}
     >
-      <CardImg src={image.small} />
+      <CardImg src={image.small} placeholder="/image/placeholder.gif" />
       <CardBody>
         <CardController>
           {CotrollerItems('heart', 'Like')}
