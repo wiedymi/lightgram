@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@graphql-modules/core": "^0.7.10",
-    "apollo-server-express": "^2.9.4",
+    "apollo-server-express": "^2.14.2",
     "bcrypt": "^3.0.6",
     "compression": "^1.7.4",
     "dotenv": "^8.1.0",
