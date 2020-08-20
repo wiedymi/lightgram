@@ -11,7 +11,7 @@
   "dependencies": {
     "@graphql-modules/core": "^0.7.10",
     "apollo-server-express": "^2.9.4",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "compression": "^1.7.4",
     "dotenv": "^8.1.0",
     "esm": "^3.2.25",
